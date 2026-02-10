@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
 import {
   TrendingUp,
   BookOpen,
@@ -13,7 +12,7 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { motion } from "framer-motion";
 
 const items = [
@@ -30,6 +29,11 @@ export default function Sidebar() {
 
   const handleSignOut = async () => {
     try {
+      if (!supabaseConfigured) {
+        router.replace("/login");
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error("Sign out error:", error);

@@ -1,7 +1,8 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { initTheme } from "../lib/theme";
 import { FcGoogle } from "react-icons/fc";
 import { TrendingUp, Mail, Zap } from "lucide-react";
@@ -18,17 +19,22 @@ export default function LoginPage() {
   }, []);
 
   const handleGoogle = async () => {
+    if (!supabaseConfigured) {
+      setError("Supabase is not configured.");
+      return;
+    }
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin },
     });
   };
 
-  const handleEmail = async (e: React.FormEvent) => {
+  const handleEmail = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setNotice("");
     if (!email.trim()) return setError("Email is required");
+    if (!supabaseConfigured) return setError("Supabase is not configured.");
 
     setSending(true);
     const { error: otpError } = await supabase.auth.signInWithOtp({

@@ -1,7 +1,7 @@
  "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import Sidebar from "../components/Sidebar";
 import Topbar from "@/app/components/Topbar";
 
@@ -9,6 +9,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
+    if (!supabaseConfigured) return;
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
     });

@@ -3,7 +3,7 @@
 import { Sun, Moon, Bell, ChevronDown, ShieldAlert, UserCog, Trash2, Power } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "../lib/supabaseClient";
+import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { toggleTheme, initTheme } from "../lib/theme";
 
 export default function Topbar({ user }: any) {
@@ -63,11 +63,13 @@ export default function Topbar({ user }: any) {
     year: "numeric",
   }).toUpperCase().replace(/,/g, "").split(" ");
 
-  const avatar = user?.user_metadata?.avatar_url;
+  const avatar = user?.user_metadata?.avatar_url as string | undefined;
   const name = user?.user_metadata?.full_name || "InvestLab Trader";
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    if (supabaseConfigured) {
+      await supabase.auth.signOut();
+    }
     window.location.href = "/";
   };
 
@@ -117,12 +119,18 @@ export default function Topbar({ user }: any) {
             className={`flex items-center gap-3 p-1.5 pr-3 rounded-2xl cursor-pointer transition-all ${isOpen ? 'bg-card shadow-inner' : ''}`}
           >
             <div className="relative">
-              <img
-                src={avatar} 
-                referrerPolicy="no-referrer"
-                className="h-10 w-10 rounded-xl border border-border object-cover grayscale-[20%] hover:grayscale-0 transition-all"
-                alt="Profile"
-              />
+              {avatar ? (
+                <img
+                  src={avatar}
+                  referrerPolicy="no-referrer"
+                  className="h-10 w-10 rounded-xl border border-border object-cover grayscale-[20%] hover:grayscale-0 transition-all"
+                  alt="Profile"
+                />
+              ) : (
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-card text-[10px] font-bold text-muted">
+                  IL
+                </div>
+              )}
               <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-card flex items-center justify-center">
                 <div className="h-2 w-2 rounded-full bg-emerald-500" />
               </div>
