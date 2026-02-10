@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-/* 1. Define the theme variables */
+/* ======================================================
+   1. Theme Tokens (Tailwind v4 compatible)
+   ====================================================== */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -10,11 +12,13 @@
   --color-accent-2: var(--accent-2);
   --color-border: var(--border);
   --color-input-bg: var(--input-bg);
-  
+
   --font-sans: "Space Grotesk", sans-serif;
 }
 
-/* 2. Set the actual values */
+/* ======================================================
+   2. Light Theme (Default)
+   ====================================================== */
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
@@ -26,7 +30,9 @@
   --input-bg: #f1f5f9;
 }
 
-/* 3. High-specificity dark mode values */
+/* ======================================================
+   3. Dark Theme
+   ====================================================== */
 :root.dark {
   --background: #050505;
   --foreground: #f8fafc;
@@ -38,12 +44,36 @@
   --input-bg: #0f172a;
 }
 
-/* 4. Force body to use these variables */
-body {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
-  transition: background-color 0.2s ease, color 0.2s ease;
+/* ======================================================
+   4. Base Styles
+   ====================================================== */
+html {
+  font-family: var(--font-sans);
 }
 
-/* Fix for v4 dark mode selector */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* ======================================================
+   5. Element Resets (Minimal, Safe)
+   ====================================================== */
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* ======================================================
+   6. Tailwind v4 Dark Mode Variant Fix
+   ====================================================== */
 @custom-variant dark (&:where(.dark, .dark *));

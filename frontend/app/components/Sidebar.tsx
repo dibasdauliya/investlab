@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import {
   TrendingUp,
   BookOpen,
@@ -24,6 +26,31 @@ const items = [
 
 export default function Sidebar() {
   const path = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Sign out error:", error);
+        return;
+      }
+      
+      // Clear localStorage to remove any cached data
+      localStorage.clear();
+      
+      // Replace current history entry and push a new one to break the back chain
+      window.history.replaceState(null, "", "/login");
+      
+      // Then navigate
+      router.replace("/login");
+      
+      // Push a dummy entry so back button stays on login
+      window.history.pushState(null, "", "/login");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    }
+  };
 
   return (
     <aside className="relative flex h-screen w-72 flex-col border-r border-border bg-card/80 backdrop-blur-xl p-6">
@@ -40,7 +67,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-2">
         <p className="mb-4 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted">
-          Menu
+          MENU
         </p>
         {items.map(({ href, label, icon: Icon }) => {
           const isActive = path === href;
@@ -93,7 +120,7 @@ export default function Sidebar() {
 
       {/* Sign Out */}
       <button
-        onClick={() => supabase.auth.signOut()}
+        onClick={handleSignOut}
         className="group mt-auto flex items-center justify-between px-4 py-4 rounded-2xl border border-border bg-card/50 text-muted transition-all hover:bg-red-500/10 hover:text-red-400"
       >
         <div className="flex items-center gap-3">

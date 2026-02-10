@@ -4,17 +4,55 @@ import { Sun, Moon, Bell, ChevronDown, ShieldAlert, UserCog, Trash2, Power } fro
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "../lib/supabaseClient";
-import { toggleTheme, initTheme } from "../lib/theme"; // Importing your custom theme logic
+import { toggleTheme, initTheme } from "../lib/theme";
 
 export default function Topbar({ user }: any) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [marketStatus, setMarketStatus] = useState("CLOSED");
+  const [statusColor, setStatusColor] = useState("bg-red-500");
 
   // Initialize theme and mount component
   useEffect(() => {
-    initTheme(); // Ensures the correct theme is applied on load
+    initTheme();
     setMounted(true);
+    updateMarketStatus();
+    
+    // Update market status every minute
+    const interval = setInterval(updateMarketStatus, 60000);
+    return () => clearInterval(interval);
   }, []);
+
+  const updateMarketStatus = () => {
+    const now = new Date();
+    
+    // US markets operate Monday-Friday, 9:30 AM - 4:00 PM EST
+    const dayOfWeek = now.getDay();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    
+    // Check if it's a weekday (1-5 = Monday-Friday)
+    const isWeekday = dayOfWeek >= 1 && dayOfWeek <= 5;
+    
+    // Convert to EST (UTC-5, or UTC-4 during DST)
+    // For simplicity, we'll assume EST year-round or use system time
+    const estTime = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+    const estHours = estTime.getHours();
+    const estMinutes = estTime.getMinutes();
+    
+    // Market open: 9:30 AM - 4:00 PM EST
+    const isOpen = isWeekday && 
+                   (estHours > 9 || (estHours === 9 && estMinutes >= 30)) && 
+                   estHours < 16;
+    
+    if (isOpen) {
+      setMarketStatus("MARKET OPEN");
+      setStatusColor("bg-emerald-500");
+    } else {
+      setMarketStatus("MARKET CLOSED");
+      setStatusColor("bg-red-500");
+    }
+  };
 
   // Format Date: e.g., FEB . 09 . 2026
   const now = new Date();
@@ -38,9 +76,9 @@ export default function Topbar({ user }: any) {
       {/* Left Side: Creative Market Clock */}
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+          <div className={`h-1.5 w-1.5 rounded-full ${statusColor} animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]`} />
           <h1 className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
-            EST / <span className="text-foreground">{dayName}</span>
+            {marketStatus} / <span className="text-foreground">{dayName}</span>
           </h1>
         </div>
         {mounted && (
