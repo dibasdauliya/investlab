@@ -39,16 +39,16 @@ export default function Sidebar() {
         console.error("Sign out error:", error);
         return;
       }
-      
+
       // Clear localStorage to remove any cached data
       localStorage.clear();
-      
+
       // Replace current history entry and push a new one to break the back chain
       window.history.replaceState(null, "", "/login");
-      
+
       // Then navigate
       router.replace("/login");
-      
+
       // Push a dummy entry so back button stays on login
       window.history.pushState(null, "", "/login");
     } catch (err) {
@@ -68,7 +68,6 @@ export default function Sidebar() {
         </span>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 space-y-2">
         <p className="mb-4 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-muted">
           MENU
@@ -84,29 +83,18 @@ export default function Sidebar() {
                     : "text-muted hover:bg-card hover:text-foreground"
                 }`}
               >
-                {/* Active Glow Indicator */}
                 {isActive && (
                   <motion.div
                     layoutId="active-pill"
-                    className="absolute inset-0 rounded-2xl bg-accent-2 shadow-[0_0_25px_rgba(101,61,126,0.3)] dark:shadow-[0_0_25px_rgba(101,61,126,0.3)]"
+                    className="absolute inset-0 rounded-2xl bg-accent-2"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                
+
                 <Icon size={20} className="relative z-10" />
                 <span className="relative z-10 font-bold text-sm tracking-tight">
                   {label}
                 </span>
-
-                {isActive && (
-                  <motion.div 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="absolute right-4 z-10"
-                  >
-                    <Sparkles size={14} className="text-white/70" />
-                  </motion.div>
-                )}
               </div>
             </Link>
           );
@@ -128,7 +116,10 @@ export default function Sidebar() {
         className="group mt-auto flex items-center justify-between px-4 py-4 rounded-2xl border border-border bg-card/50 text-muted transition-all hover:bg-red-500/10 hover:text-red-400"
       >
         <div className="flex items-center gap-3">
-          <LogOut size={18} className="group-hover:-translate-x-1 transition-transform" />
+          <LogOut
+            size={18}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
           <span className="text-sm font-bold">Sign out</span>
         </div>
       </button>

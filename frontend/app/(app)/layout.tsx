@@ -1,20 +1,29 @@
- "use client";
+"use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import Sidebar from "../components/Sidebar";
 import Topbar from "@/app/components/Topbar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!supabaseConfigured) return;
+    if (!supabaseConfigured) {
+      router.replace("/login");
+      return;
+    }
 
     supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+      if (data.session) {
+        setSession(data.session);
+      } else {
+        router.replace("/login");
+      }
     });
-  }, []);
+  }, [router]);
 
   if (!session) return null;
 
