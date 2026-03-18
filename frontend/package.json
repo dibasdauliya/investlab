@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
+    "yahoo-finance2": "^3.13.2",
     "framer-motion": "^12.34.0",
     "katex": "^0.16.28",
     "lucide-react": "^0.563.0",

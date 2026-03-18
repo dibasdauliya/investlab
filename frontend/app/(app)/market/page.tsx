@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
-const API_BASE_URL = 'http://localhost:5001';
+const API_BASE_URL = '';
 
 interface ChartPoint { time: string; price: number; }
 interface MarketStats { open: string; high: string; low: string; prevClose: string; vol: string; exchange: string; mktCap: string; peRatio: string; dividend: string; }
