@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePlaidLink } from "react-plaid-link";
 import {
   Wallet,
   TrendingUp,
@@ -287,11 +288,31 @@ function StockRow({
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
+const LS_KEY = "planner_connection";
+
 export default function PlannerPage() {
   const [connected, setConnected] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountsLoading, setAccountsLoading] = useState(false);
+  const [linkToken, setLinkToken] = useState<string | null>(null);
+
+  // Restore connection from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        const { accounts: savedAccounts, isDemo: savedIsDemo } = JSON.parse(saved);
+        if (savedAccounts?.length) {
+          setAccounts(savedAccounts);
+          setIsDemo(savedIsDemo ?? false);
+          setConnected(true);
+        }
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }, []);
 
   const [monthlyExpenses, setMonthlyExpenses] = useState("");
   const [analyzed, setAnalyzed] = useState(false);
@@ -319,17 +340,24 @@ export default function PlannerPage() {
 
   const investableAmount = allocations?.investment ?? 500;
 
+  // Persist connection to localStorage whenever accounts update
+  useEffect(() => {
+    if (connected && accounts.length > 0) {
+      localStorage.setItem(LS_KEY, JSON.stringify({ accounts, isDemo }));
+    }
+  }, [connected, accounts, isDemo]);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
 
-  const connectBank = async () => {
+  const fetchAccounts = async (demo = false) => {
     setAccountsLoading(true);
     try {
       const res = await fetch("/api/planner/accounts");
       const data = await res.json();
+      if (data.error) throw new Error(data.error);
       setAccounts(data.accounts);
-      setIsDemo(data.demo ?? false);
+      setIsDemo(data.demo ?? demo);
     } catch {
-      // Inline fallback if API is unreachable during dev
       setAccounts([
         { id: "1", name: "Checking Account", type: "checking", mask: "4567", balance: 4250, institution: "Chase Bank" },
         { id: "2", name: "High-Yield Savings", type: "savings", mask: "8901", balance: 12800, institution: "Chase Bank" },
@@ -340,6 +368,52 @@ export default function PlannerPage() {
       setConnected(true);
     }
   };
+
+  const connectDemo = () => fetchAccounts(true);
+
+  // Plaid Link — only initialised once we have a link token
+  const onPlaidSuccess = useCallback(async (public_token: string) => {
+    setAccountsLoading(true);
+    try {
+      const res = await fetch("/api/planner/exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_token }),
+      });
+      if (!res.ok) throw new Error("exchange failed");
+      await fetchAccounts(false);
+    } catch {
+      setIsDemo(true);
+      await fetchAccounts(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const { open: openPlaidLink, ready: plaidReady } = usePlaidLink({
+    token: linkToken,
+    onSuccess: onPlaidSuccess,
+  });
+
+  const connectBank = async () => {
+    setAccountsLoading(true);
+    try {
+      const res = await fetch("/api/planner/link-token", { method: "POST" });
+      const data = await res.json();
+      if (data.error || !data.link_token) throw new Error(data.error ?? "no token");
+      setLinkToken(data.link_token);
+      setAccountsLoading(false);
+      // openPlaidLink is called in useEffect once plaidReady flips
+    } catch {
+      setAccountsLoading(false);
+      connectDemo();
+    }
+  };
+
+  // Open Plaid Link as soon as the SDK is ready after we receive a link token
+  useEffect(() => {
+    if (plaidReady && linkToken) {
+      openPlaidLink();
+    }
+  }, [plaidReady, linkToken, openPlaidLink]);
 
   const fetchSP500 = async () => {
     setSp500Loading(true);
@@ -362,6 +436,17 @@ export default function PlannerPage() {
   };
 
   const resetExpenses = () => {
+    setAnalyzed(false);
+    setMonthlyExpenses("");
+    setSp500([]);
+    setExpandedStock(null);
+  };
+
+  const disconnect = () => {
+    localStorage.removeItem(LS_KEY);
+    setConnected(false);
+    setAccounts([]);
+    setIsDemo(false);
     setAnalyzed(false);
     setMonthlyExpenses("");
     setSp500([]);
@@ -417,7 +502,7 @@ export default function PlannerPage() {
               {accountsLoading ? "Connecting…" : "Connect with Plaid"}
             </button>
             <button
-              onClick={connectBank}
+              onClick={connectDemo}
               disabled={accountsLoading}
               className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-border text-foreground font-semibold hover:bg-input-bg transition-colors disabled:opacity-50"
             >
@@ -441,13 +526,21 @@ export default function PlannerPage() {
           >
             {/* ── Account Cards ── */}
             <section>
-              <h2 className="text-base font-bold text-foreground mb-3 flex items-center gap-2">
-                <Building2 size={16} className="text-accent-2" />
-                Your Accounts
-                {isDemo && (
-                  <span className="text-xs font-normal text-muted">(sample data)</span>
-                )}
-              </h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-bold text-foreground flex items-center gap-2">
+                  <Building2 size={16} className="text-accent-2" />
+                  Your Accounts
+                  {isDemo && (
+                    <span className="text-xs font-normal text-muted">(sample data)</span>
+                  )}
+                </h2>
+                <button
+                  onClick={disconnect}
+                  className="text-xs text-muted hover:text-foreground underline"
+                >
+                  Disconnect
+                </button>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {accounts.map((acc) => (
                   <div key={acc.id} className="rounded-xl border border-border bg-card p-5">
