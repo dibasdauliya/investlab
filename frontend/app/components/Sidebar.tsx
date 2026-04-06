@@ -11,6 +11,7 @@ import {
   Users,
   LogOut,
   Sparkles,
+  LineChart,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "../lib/supabaseClient";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ const items = [
   { href: "/learning", label: "Learning", icon: BookOpen },
   { href: "/market", label: "Market Indices", icon: BarChart3 },
   { href: "/planner", label: "Financial Planner", icon: Wallet },
+  { href: "/paper-trading", label: "Paper Trading", icon: LineChart },
   { href: "/community", label: "Community", icon: Users },
 ];
 

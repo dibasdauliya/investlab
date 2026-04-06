@@ -82,7 +82,9 @@ function AllocationCard({
 }) {
   return (
     <div className="rounded-xl border border-border bg-background p-4 flex flex-col gap-2">
-      <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${colorClass}`}>
+      <div
+        className={`flex h-9 w-9 items-center justify-center rounded-lg ${colorClass}`}
+      >
         {icon}
       </div>
       <p className="text-xs text-muted leading-tight">{label}</p>
@@ -103,7 +105,9 @@ function StockRow({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
-  const [investAmt, setInvestAmt] = useState(String(Math.round(investableAmount)));
+  const [investAmt, setInvestAmt] = useState(
+    String(Math.round(investableAmount)),
+  );
   const [years, setYears] = useState("5");
   const [rate, setRate] = useState("7");
 
@@ -118,7 +122,9 @@ function StockRow({
   return (
     <div
       className={`rounded-xl border transition-all ${
-        isExpanded ? "border-accent-2 bg-accent-2/5" : "border-border bg-card hover:border-accent-2/40"
+        isExpanded
+          ? "border-accent-2 bg-accent-2/5"
+          : "border-border bg-card hover:border-accent-2/40"
       }`}
     >
       {/* Row header — always visible */}
@@ -139,7 +145,9 @@ function StockRow({
 
         {/* Price + change */}
         <div className="text-right flex-shrink-0">
-          <p className="font-bold text-foreground text-sm">${stock.price.toFixed(2)}</p>
+          <p className="font-bold text-foreground text-sm">
+            ${stock.price.toFixed(2)}
+          </p>
           <p
             className={`text-xs font-semibold ${
               isUp
@@ -179,7 +187,9 @@ function StockRow({
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div>
                   <p className="text-muted mb-0.5">Market Cap</p>
-                  <p className="font-semibold text-foreground">{fmtCap(stock.marketCap)}</p>
+                  <p className="font-semibold text-foreground">
+                    {fmtCap(stock.marketCap)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted mb-0.5">P/E Ratio</p>
@@ -203,9 +213,13 @@ function StockRow({
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="text-xs text-muted block mb-1">Invest Amount</label>
+                    <label className="text-xs text-muted block mb-1">
+                      Invest Amount
+                    </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm pointer-events-none">$</span>
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-sm pointer-events-none">
+                        $
+                      </span>
                       <input
                         type="number"
                         value={investAmt}
@@ -216,7 +230,9 @@ function StockRow({
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs text-muted block mb-1">Years</label>
+                    <label className="text-xs text-muted block mb-1">
+                      Years
+                    </label>
                     <input
                       type="number"
                       value={years}
@@ -226,7 +242,9 @@ function StockRow({
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted block mb-1">Annual Return %</label>
+                    <label className="text-xs text-muted block mb-1">
+                      Annual Return %
+                    </label>
                     <input
                       type="number"
                       value={rate}
@@ -241,7 +259,9 @@ function StockRow({
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center p-3 rounded-lg bg-card border border-border">
                     <p className="text-xs text-muted mb-1">Principal</p>
-                    <p className="font-black text-foreground text-sm">{fmt(principal)}</p>
+                    <p className="font-black text-foreground text-sm">
+                      {fmt(principal)}
+                    </p>
                   </div>
                   <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50">
                     <p className="text-xs text-muted mb-1">Estimated Gain</p>
@@ -251,13 +271,17 @@ function StockRow({
                   </div>
                   <div className="text-center p-3 rounded-lg bg-accent-2/10 border border-accent-2/20">
                     <p className="text-xs text-muted mb-1">Total Value</p>
-                    <p className="font-black text-accent-2 text-sm">{fmt(total)}</p>
+                    <p className="font-black text-accent-2 text-sm">
+                      {fmt(total)}
+                    </p>
                   </div>
                 </div>
 
                 {/* Timeline preview */}
                 <div className="pt-1">
-                  <p className="text-xs text-muted mb-2">Year-by-year projection</p>
+                  <p className="text-xs text-muted mb-2">
+                    Year-by-year projection
+                  </p>
                   <div className="flex gap-2 overflow-x-auto pb-1">
                     {[1, 2, 3, 5, 10].map((yr) => {
                       const val = compound(principal, r, yr);
@@ -267,7 +291,9 @@ function StockRow({
                           className="flex-shrink-0 text-center px-3 py-2 rounded-lg bg-card border border-border"
                         >
                           <p className="text-xs text-muted">{yr}Y</p>
-                          <p className="text-xs font-bold text-foreground">{fmt(val)}</p>
+                          <p className="text-xs font-bold text-foreground">
+                            {fmt(val)}
+                          </p>
                         </div>
                       );
                     })}
@@ -275,7 +301,8 @@ function StockRow({
                 </div>
 
                 <p className="text-xs text-muted">
-                  * Estimates only. Past performance does not guarantee future results.
+                  * Estimates only. Past performance does not guarantee future
+                  results.
                 </p>
               </div>
             </div>
@@ -297,12 +324,13 @@ export default function PlannerPage() {
   const [accountsLoading, setAccountsLoading] = useState(false);
   const [linkToken, setLinkToken] = useState<string | null>(null);
 
-  // Restore connection from localStorage on mount
+  // Restore connection and expenses from localStorage on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(LS_KEY);
       if (saved) {
-        const { accounts: savedAccounts, isDemo: savedIsDemo } = JSON.parse(saved);
+        const { accounts: savedAccounts, isDemo: savedIsDemo } =
+          JSON.parse(saved);
         if (savedAccounts?.length) {
           setAccounts(savedAccounts);
           setIsDemo(savedIsDemo ?? false);
@@ -311,6 +339,12 @@ export default function PlannerPage() {
       }
     } catch {
       // ignore parse errors
+    }
+
+    const savedExpenses = localStorage.getItem("planner_expenses");
+    if (savedExpenses) {
+      setMonthlyExpenses(savedExpenses);
+      setAnalyzed(true);
     }
   }, []);
 
@@ -329,14 +363,15 @@ export default function PlannerPage() {
   const hasSurplus = surplus > 0;
 
   // Recommended allocations when in surplus
-  const allocations = analyzed && hasSurplus
-    ? {
-        emergency: Math.round(surplus * 0.2),
-        vacation: Math.round(surplus * 0.1),
-        investment: Math.round(surplus * 0.5),
-        misc: Math.round(surplus * 0.2),
-      }
-    : null;
+  const allocations =
+    analyzed && hasSurplus
+      ? {
+          emergency: Math.round(surplus * 0.2),
+          vacation: Math.round(surplus * 0.1),
+          investment: Math.round(surplus * 0.5),
+          misc: Math.round(surplus * 0.2),
+        }
+      : null;
 
   const investableAmount = allocations?.investment ?? 500;
 
@@ -359,8 +394,22 @@ export default function PlannerPage() {
       setIsDemo(data.demo ?? demo);
     } catch {
       setAccounts([
-        { id: "1", name: "Checking Account", type: "checking", mask: "4567", balance: 4250, institution: "Chase Bank" },
-        { id: "2", name: "High-Yield Savings", type: "savings", mask: "8901", balance: 12800, institution: "Chase Bank" },
+        {
+          id: "1",
+          name: "Checking Account",
+          type: "checking",
+          mask: "4567",
+          balance: 4250,
+          institution: "Chase Bank",
+        },
+        {
+          id: "2",
+          name: "High-Yield Savings",
+          type: "savings",
+          mask: "8901",
+          balance: 12800,
+          institution: "Chase Bank",
+        },
       ]);
       setIsDemo(true);
     } finally {
@@ -398,7 +447,8 @@ export default function PlannerPage() {
     try {
       const res = await fetch("/api/planner/link-token", { method: "POST" });
       const data = await res.json();
-      if (data.error || !data.link_token) throw new Error(data.error ?? "no token");
+      if (data.error || !data.link_token)
+        throw new Error(data.error ?? "no token");
       setLinkToken(data.link_token);
       setAccountsLoading(false);
       // openPlaidLink is called in useEffect once plaidReady flips
@@ -429,10 +479,18 @@ export default function PlannerPage() {
     }
   };
 
+  // Auto-fetch S&P 500 when analysis is restored from localStorage
+  useEffect(() => {
+    if (analyzed && sp500.length === 0) {
+      fetchSP500();
+    }
+  }, [analyzed]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const analyze = () => {
     if (!monthlyExpenses || expenses <= 0) return;
     setAnalyzed(true);
     fetchSP500();
+    localStorage.setItem("planner_expenses", monthlyExpenses);
   };
 
   const resetExpenses = () => {
@@ -440,10 +498,12 @@ export default function PlannerPage() {
     setMonthlyExpenses("");
     setSp500([]);
     setExpandedStock(null);
+    localStorage.removeItem("planner_expenses");
   };
 
   const disconnect = () => {
     localStorage.removeItem(LS_KEY);
+    localStorage.removeItem("planner_expenses");
     setConnected(false);
     setAccounts([]);
     setIsDemo(false);
@@ -460,9 +520,12 @@ export default function PlannerPage() {
       {/* ── Header ── */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-black text-foreground">Financial Planner</h1>
+          <h1 className="text-3xl font-black text-foreground">
+            Financial Planner
+          </h1>
           <p className="mt-1 text-muted text-sm">
-            Connect your bank · Analyze finances · Get personalized investment recommendations
+            Connect your bank · Analyze finances · Get personalized investment
+            recommendations
           </p>
         </div>
         {isDemo && (
@@ -482,10 +545,12 @@ export default function PlannerPage() {
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent-2/10">
             <Building2 size={30} className="text-accent-2" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Connect Your Bank Account</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">
+            Connect Your Bank Account
+          </h2>
           <p className="text-muted text-sm max-w-sm mx-auto mb-8 leading-relaxed">
-            Link your checking and savings accounts to see your total balance and receive
-            personalized investment recommendations.
+            Link your checking and savings accounts to see your total balance
+            and receive personalized investment recommendations.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -531,7 +596,9 @@ export default function PlannerPage() {
                   <Building2 size={16} className="text-accent-2" />
                   Your Accounts
                   {isDemo && (
-                    <span className="text-xs font-normal text-muted">(sample data)</span>
+                    <span className="text-xs font-normal text-muted">
+                      (sample data)
+                    </span>
                   )}
                 </h2>
                 <button
@@ -543,7 +610,10 @@ export default function PlannerPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {accounts.map((acc) => (
-                  <div key={acc.id} className="rounded-xl border border-border bg-card p-5">
+                  <div
+                    key={acc.id}
+                    className="rounded-xl border border-border bg-card p-5"
+                  >
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-semibold uppercase tracking-wider text-muted">
                         {acc.institution}
@@ -561,7 +631,9 @@ export default function PlannerPage() {
                     <p className="text-xs text-muted mb-1">
                       {acc.name} ••••{acc.mask}
                     </p>
-                    <p className="text-2xl font-black text-foreground">{fmt(acc.balance)}</p>
+                    <p className="text-2xl font-black text-foreground">
+                      {fmt(acc.balance)}
+                    </p>
                   </div>
                 ))}
 
@@ -573,8 +645,12 @@ export default function PlannerPage() {
                       Total Available
                     </span>
                   </div>
-                  <p className="text-xs text-muted mb-1">All accounts combined</p>
-                  <p className="text-2xl font-black text-foreground">{fmt(totalBalance)}</p>
+                  <p className="text-xs text-muted mb-1">
+                    All accounts combined
+                  </p>
+                  <p className="text-2xl font-black text-foreground">
+                    {fmt(totalBalance)}
+                  </p>
                 </div>
               </div>
             </section>
@@ -591,8 +667,8 @@ export default function PlannerPage() {
                   What are your total monthly expenses?
                 </h2>
                 <p className="text-sm text-muted mb-5">
-                  Include rent, food, utilities, subscriptions, transportation, and any other
-                  recurring costs.
+                  Include rent, food, utilities, subscriptions, transportation,
+                  and any other recurring costs.
                 </p>
                 <div className="flex gap-3 flex-wrap">
                   <div className="relative">
@@ -643,14 +719,22 @@ export default function PlannerPage() {
                       }`}
                     >
                       {hasSurplus ? (
-                        <TrendingUp size={22} className="text-green-600 dark:text-green-400" />
+                        <TrendingUp
+                          size={22}
+                          className="text-green-600 dark:text-green-400"
+                        />
                       ) : (
-                        <TrendingDown size={22} className="text-red-600 dark:text-red-400" />
+                        <TrendingDown
+                          size={22}
+                          className="text-red-600 dark:text-red-400"
+                        />
                       )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3 flex-wrap">
-                        <h3 className="text-base font-bold text-foreground">Financial Analysis</h3>
+                        <h3 className="text-base font-bold text-foreground">
+                          Financial Analysis
+                        </h3>
                         <button
                           onClick={resetExpenses}
                           className="text-xs text-muted hover:text-foreground underline"
@@ -660,12 +744,20 @@ export default function PlannerPage() {
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
                         <div>
-                          <p className="text-muted text-xs mb-0.5">Total Balance</p>
-                          <p className="font-bold text-foreground">{fmt(totalBalance)}</p>
+                          <p className="text-muted text-xs mb-0.5">
+                            Total Balance
+                          </p>
+                          <p className="font-bold text-foreground">
+                            {fmt(totalBalance)}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-muted text-xs mb-0.5">Monthly Expenses</p>
-                          <p className="font-bold text-foreground">{fmt(expenses)}</p>
+                          <p className="text-muted text-xs mb-0.5">
+                            Monthly Expenses
+                          </p>
+                          <p className="font-bold text-foreground">
+                            {fmt(expenses)}
+                          </p>
                         </div>
                         <div>
                           <p className="text-muted text-xs mb-0.5">
@@ -740,12 +832,13 @@ export default function PlannerPage() {
                           Your expenses exceed your balance
                         </h3>
                         <p className="text-sm text-muted mb-3 leading-relaxed">
-                          You&apos;re spending {fmt(Math.abs(surplus))} more than you currently have.
-                          To start investing, reduce monthly expenses or deposit additional funds.
+                          You&apos;re spending {fmt(Math.abs(surplus))} more
+                          than you currently have. To start investing, reduce
+                          monthly expenses or deposit additional funds.
                         </p>
                         <p className="text-sm font-semibold text-foreground">
-                          To invest $500/month, you&apos;d need to deposit at least{" "}
-                          {fmt(Math.abs(surplus) + 500)} more.
+                          To invest $500/month, you&apos;d need to deposit at
+                          least {fmt(Math.abs(surplus) + 500)} more.
                         </p>
                       </div>
                     </div>
@@ -767,7 +860,9 @@ export default function PlannerPage() {
                   {sp500Loading && (
                     <div className="flex items-center justify-center gap-3 py-10 text-muted">
                       <RefreshCw size={18} className="animate-spin" />
-                      <span className="text-sm">Fetching live market data…</span>
+                      <span className="text-sm">
+                        Fetching live market data…
+                      </span>
                     </div>
                   )}
 
@@ -776,7 +871,10 @@ export default function PlannerPage() {
                       <AlertTriangle size={15} />
                       <span>
                         Could not load market data.{" "}
-                        <button onClick={fetchSP500} className="underline hover:text-foreground">
+                        <button
+                          onClick={fetchSP500}
+                          className="underline hover:text-foreground"
+                        >
                           Retry
                         </button>
                       </span>
@@ -793,7 +891,9 @@ export default function PlannerPage() {
                           isExpanded={expandedStock === stock.ticker}
                           onToggle={() =>
                             setExpandedStock(
-                              expandedStock === stock.ticker ? null : stock.ticker
+                              expandedStock === stock.ticker
+                                ? null
+                                : stock.ticker,
                             )
                           }
                         />
